@@ -1,5 +1,5 @@
 import { connectDB } from '@/lib/mongodb';
-import { hashPassword, comparePassword } from '@/lib/password';
+import { hashPassword } from '@/lib/password';
 import { generateToken } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
