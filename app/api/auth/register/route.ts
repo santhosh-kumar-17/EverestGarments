@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     await users.insertOne(newUser);
 
     // Generate token
-    const token = generateToken({ email, type: 'user' });
+    const token = generateToken(email);
 
     return NextResponse.json(
       {
