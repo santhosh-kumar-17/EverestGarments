@@ -41,19 +41,15 @@ export default function AdminLayout({
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      {/* Desktop Sidebar - Always Visible */}
+      {/* Desktop Sidebar - Always Visible on md+ screens */}
       <aside
         style={{
           width: '16rem',
           background: '#1f2937',
-          display: 'none',
           flexDirection: 'column',
           height: '100vh',
           position: 'sticky',
           top: 0,
-          '@media (min-width: 768px)': {
-            display: 'flex',
-          },
         }}
         className="hidden md:flex"
       >
