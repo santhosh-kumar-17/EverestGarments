@@ -28,9 +28,16 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (items.length === 0) {
       toast.error('Your cart is empty');
+      return;
+    }
+
+    // Client-side phone validation
+    const phoneDigits = formData.phoneNumber.replace(/\D/g, '');
+    if (phoneDigits.length < 7) {
+      toast.error('Please enter a valid phone number (at least 7 digits)');
       return;
     }
 
@@ -38,10 +45,10 @@ export default function CheckoutPage() {
       setLoading(true);
 
       const orderData = {
-        customerName: formData.customerName,
-        phone: formData.phoneNumber,
-        address: formData.address,
-        notes: formData.notes,
+        customerName: formData.customerName.trim(),
+        phone: phoneDigits,
+        address: formData.address.trim(),
+        notes: formData.notes.trim() || undefined,
         items: items.map((item) => ({
           productId: item.productId,
           name: item.name,
@@ -77,12 +84,33 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
-        <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '3rem 1rem' }}>
-          <div style={{ borderRadius: '0.5rem', background: '#dbeafe', padding: '2rem', textAlign: 'center' }}>
-            <p style={{ marginBottom: '1rem', color: '#6b7280' }}>Your cart is empty</p>
-            <Link href="/products" className="btn btn-primary" style={{ display: 'inline-block' }}>
-              Continue Shopping
+      <div style={{ minHeight: '80vh', background: '#f9fafb' }}>
+        <div className="container" style={{ padding: '5rem 1.5rem' }}>
+          <div
+            className="animate-fade-in-up"
+            style={{
+              textAlign: 'center',
+              padding: '4rem 2rem',
+              background: 'white',
+              borderRadius: '1rem',
+              border: '1px solid #e5e7eb',
+              maxWidth: '28rem',
+              margin: '0 auto',
+            }}
+          >
+            <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛒</div>
+            <h2 style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '1.25rem' }}>
+              Your cart is empty
+            </h2>
+            <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+              Add some products before checking out
+            </p>
+            <Link
+              href="/products"
+              className="btn btn-primary"
+              id="empty-checkout-shop"
+            >
+              Browse Products →
             </Link>
           </div>
         </div>
@@ -91,113 +119,232 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
+    <div style={{ minHeight: '80vh', background: '#f9fafb' }}>
       {/* Header */}
-      <div style={{ borderBottom: '1px solid #e5e7eb', background: 'white', padding: '1.5rem' }}>
-        <div style={{ maxWidth: '80rem', margin: '0 auto', paddingLeft: '1rem', paddingRight: '1rem' }}>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1a1a1a' }}>Checkout</h1>
+      <div
+        style={{
+          borderBottom: '1px solid #e5e7eb',
+          background: 'white',
+          padding: '2rem 0',
+        }}
+      >
+        <div className="container">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <Link
+              href="/cart"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 500,
+              }}
+            >
+              ← Back to Cart
+            </Link>
+          </div>
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: 800,
+              color: '#111827',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Checkout
+          </h1>
+
+          {/* Progress Steps */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginTop: '1.5rem',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                color: '#16a34a',
+              }}
+            >
+              <span
+                style={{
+                  width: '1.5rem',
+                  height: '1.5rem',
+                  borderRadius: '50%',
+                  background: '#16a34a',
+                  color: 'white',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.65rem',
+                }}
+              >
+                ✓
+              </span>
+              Cart
+            </span>
+            <span style={{ width: '2rem', height: '2px', background: '#16a34a' }} />
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                color: '#6366f1',
+              }}
+            >
+              <span
+                style={{
+                  width: '1.5rem',
+                  height: '1.5rem',
+                  borderRadius: '50%',
+                  background: '#6366f1',
+                  color: 'white',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                }}
+              >
+                2
+              </span>
+              Details
+            </span>
+            <span style={{ width: '2rem', height: '2px', background: '#e5e7eb' }} />
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                color: '#9ca3af',
+              }}
+            >
+              <span
+                style={{
+                  width: '1.5rem',
+                  height: '1.5rem',
+                  borderRadius: '50%',
+                  background: '#e5e7eb',
+                  color: '#9ca3af',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                }}
+              >
+                3
+              </span>
+              Confirm
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Checkout Form */}
-      <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '3rem 1rem' }}>
-        <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      <div className="container" style={{ padding: '2.5rem 1.5rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gap: '2rem',
+            gridTemplateColumns: '1fr 380px',
+          }}
+        >
           {/* Order Form */}
-          <div style={{ gridColumn: 'span 2' }}>
-            <form onSubmit={handleSubmit} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <h2 style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '1rem', fontSize: '1.25rem', fontWeight: 'bold', color: '#1a1a1a' }}>
-                Delivery Information
+          <div className="animate-fade-in-up">
+            <form
+              onSubmit={handleSubmit}
+              className="card-flat"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                borderRadius: '1rem',
+                border: '1px solid #e5e7eb',
+                padding: '2rem',
+              }}
+              id="checkout-form"
+            >
+              <h2
+                style={{
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
+                  color: '#111827',
+                  letterSpacing: '-0.02em',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #f3f4f6',
+                }}
+              >
+                📦 Delivery Information
               </h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1a1a1a' }}>
-                    Full Name *
+                  <label htmlFor="customerName">
+                    Full Name <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="text"
+                    id="customerName"
                     name="customerName"
                     value={formData.customerName}
                     onChange={handleInputChange}
                     required
                     placeholder="Enter your full name"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.5rem',
-                      fontSize: '1rem',
-                      boxSizing: 'border-box',
-                    }}
+                    autoComplete="name"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1a1a1a' }}>
-                    Phone Number *
+                  <label htmlFor="phoneNumber">
+                    Phone Number <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="tel"
+                    id="phoneNumber"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
                     required
-                    placeholder="Enter your phone number"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.5rem',
-                      fontSize: '1rem',
-                      boxSizing: 'border-box',
-                    }}
+                    placeholder="Enter your phone number (e.g., 9876543210)"
+                    autoComplete="tel"
                   />
+                  <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.375rem' }}>
+                    We&apos;ll contact you on this number to confirm your order
+                  </p>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1a1a1a' }}>
-                    Address *
+                  <label htmlFor="address">
+                    Delivery Address <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <textarea
+                    id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     required
-                    rows={4}
-                    placeholder="Enter your delivery address"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.5rem',
-                      fontSize: '1rem',
-                      boxSizing: 'border-box',
-                      resize: 'vertical',
-                      fontFamily: 'inherit',
-                    }}
+                    rows={3}
+                    placeholder="Enter your full delivery address with pincode"
+                    autoComplete="street-address"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1a1a1a' }}>
-                    Additional Notes (Optional)
-                  </label>
+                  <label htmlFor="notes">Additional Notes</label>
                   <textarea
+                    id="notes"
                     name="notes"
                     value={formData.notes}
                     onChange={handleInputChange}
-                    rows={3}
-                    placeholder="Any special instructions or notes"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.5rem',
-                      fontSize: '1rem',
-                      boxSizing: 'border-box',
-                      resize: 'vertical',
-                      fontFamily: 'inherit',
-                    }}
+                    rows={2}
+                    placeholder="Any special instructions or notes (optional)"
                   />
                 </div>
               </div>
@@ -205,63 +352,167 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary"
+                className="btn btn-primary btn-lg"
+                id="submit-order-btn"
                 style={{
                   width: '100%',
-                  opacity: loading ? 0.5 : 1,
+                  fontSize: '1rem',
+                  opacity: loading ? 0.7 : 1,
                 }}
               >
-                {loading ? 'Submitting Order...' : 'Submit Order'}
+                {loading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span className="spinner spinner-sm" />
+                    Submitting Order...
+                  </span>
+                ) : (
+                  '🛍️ Place Order'
+                )}
               </button>
             </form>
 
-            <div style={{ marginTop: '1.5rem', borderRadius: '0.25rem', background: '#dbeafe', padding: '1rem', fontSize: '0.875rem', color: '#1e40af' }}>
-              <p>
-                <strong>How it works:</strong> After submitting your order, our sales
-                team will contact you using the provided phone number to confirm the
-                order, discuss payment options, and arrange delivery.
+            {/* Info Banner */}
+            <div
+              style={{
+                marginTop: '1.5rem',
+                borderRadius: '1rem',
+                background: 'linear-gradient(135deg, #f0f4ff, #ede9fe)',
+                padding: '1.25rem',
+                fontSize: '0.85rem',
+                color: '#4338ca',
+                border: '1px solid #e0e7ff',
+              }}
+            >
+              <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>
+                ℹ️ How it works:
+              </p>
+              <p style={{ lineHeight: 1.7 }}>
+                After submitting your order, our sales team will contact you
+                using the provided phone number to confirm the order, discuss
+                payment options, and arrange delivery.
               </p>
             </div>
           </div>
 
           {/* Order Summary */}
           <div>
-            <div className="card" style={{ position: 'sticky', top: '5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <h2 style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '1rem', fontSize: '1.25rem', fontWeight: 'bold', color: '#1a1a1a' }}>
-                Order Summary
+            <div
+              className="card-flat animate-fade-in-up delay-200"
+              style={{
+                position: 'sticky',
+                top: '5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+                borderRadius: '1rem',
+                border: '1px solid #e5e7eb',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
+                  color: '#111827',
+                  letterSpacing: '-0.02em',
+                  paddingBottom: '1rem',
+                  borderBottom: '1px solid #f3f4f6',
+                }}
+              >
+                📋 Order Summary
               </h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '16rem', overflowY: 'auto' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                  maxHeight: '16rem',
+                  overflowY: 'auto',
+                }}
+              >
                 {items.map((item) => (
-                  <div key={item.productId} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                    <span style={{ color: '#6b7280' }}>
-                      {item.name} x {item.quantity}
-                    </span>
-                    <span style={{ fontWeight: '600', color: '#1a1a1a' }}>
-                      Rs. {(item.price * item.quantity).toFixed(2)}
+                  <div
+                    key={item.productId}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '0.85rem',
+                      padding: '0.5rem 0',
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <span style={{ color: '#374151', fontWeight: 500 }}>
+                        {item.name}
+                      </span>
+                      <span style={{ color: '#9ca3af' }}> × {item.quantity}</span>
+                    </div>
+                    <span style={{ fontWeight: 700, color: '#111827', marginLeft: '1rem' }}>
+                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6b7280' }}>
-                  <span>Subtotal</span>
-                  <span>Rs. {totalPrice.toFixed(2)}</span>
+              <div
+                style={{
+                  borderTop: '1px solid #f3f4f6',
+                  paddingTop: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  <span style={{ color: '#6b7280' }}>Subtotal</span>
+                  <span style={{ fontWeight: 600 }}>
+                    ₹{totalPrice.toLocaleString('en-IN')}
+                  </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6b7280', fontSize: '0.875rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.8rem',
+                    color: '#9ca3af',
+                  }}
+                >
                   <span>Shipping</span>
                   <span>To be confirmed</span>
                 </div>
               </div>
 
-              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontWeight: 'bold' }}>
-                <span style={{ color: '#1a1a1a' }}>Total</span>
-                <span style={{ color: '#6366f1' }}>Rs. {totalPrice.toFixed(2)}</span>
+              <div
+                style={{
+                  borderTop: '2px solid #e5e7eb',
+                  paddingTop: '1rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
+                }}
+              >
+                <span style={{ color: '#111827' }}>Total</span>
+                <span className="gradient-text">
+                  ₹{totalPrice.toLocaleString('en-IN')}
+                </span>
               </div>
 
-              <p style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center' }}>
-                Final amount will be confirmed during payment discussion
+              <p
+                style={{
+                  fontSize: '0.7rem',
+                  color: '#9ca3af',
+                  textAlign: 'center',
+                  lineHeight: 1.5,
+                }}
+              >
+                Final amount including shipping will be confirmed during payment
+                discussion
               </p>
             </div>
           </div>

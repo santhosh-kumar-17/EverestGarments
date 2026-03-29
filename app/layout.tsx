@@ -4,8 +4,17 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'Everest Garments - Premium Textiles',
-  description: 'Premium textile catalog for wholesale ordering',
+  title: 'Everest Garments — Premium Textile Collection',
+  description:
+    'Discover premium textiles, elegant dresses, and comfortable kids wear. Browse our exclusive wholesale catalog and order with confidence.',
+  keywords: 'textiles, garments, wholesale, women wear, kids wear, dresses, fabrics',
+  openGraph: {
+    title: 'Everest Garments — Premium Textile Collection',
+    description:
+      'Discover premium textiles, elegant dresses, and comfortable kids wear.',
+    type: 'website',
+    locale: 'en_IN',
+  },
 };
 
 export default function RootLayout({
@@ -20,17 +29,17 @@ export default function RootLayout({
         <header>
           <div className="container">
             <nav>
-              <Link href="/" className="logo">
+              <Link href="/" className="logo" aria-label="Everest Garments Home">
                 Everest Garments
               </Link>
               <div className="flex gap-6 items-center">
-                <Link href="/products" className="text-sm md:text-base">
+                <Link href="/products" id="nav-shop">
                   Shop
                 </Link>
-                <Link href="/cart" className="text-sm md:text-base">
-                  Cart
+                <Link href="/cart" id="nav-cart">
+                  🛒 Cart
                 </Link>
-                <Link href="/auth" className="btn btn-primary btn-sm">
+                <Link href="/auth" className="btn btn-primary btn-sm" id="nav-admin">
                   Admin
                 </Link>
               </div>
@@ -39,45 +48,112 @@ export default function RootLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
 
         {/* Footer */}
         <footer>
           <div className="container">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '2rem',
+                marginBottom: '2rem',
+              }}
+            >
               <div>
-                <h4>About</h4>
-                <p className="text-sm">Premium textile catalog for wholesale ordering and bulk purchases.</p>
+                <h4>
+                  <span className="gradient-text">Everest Garments</span>
+                </h4>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: '#9ca3af',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Premium textile catalog for wholesale ordering and bulk
+                  purchases. Quality fabrics for women and kids.
+                </p>
               </div>
               <div>
                 <h4>Quick Links</h4>
-                <div className="flex flex-col gap-2 text-sm">
-                  <Link href="/products">Shop</Link>
+                <div className="flex flex-col gap-2">
+                  <Link href="/products">Shop All</Link>
+                  <Link href="/products?category=Women">Women</Link>
+                  <Link href="/products?category=Kids">Kids</Link>
                   <Link href="/cart">Cart</Link>
-                  <Link href="/auth">Admin</Link>
                 </div>
               </div>
               <div>
                 <h4>Contact</h4>
-                <div className="text-sm">
-                  <p>Email: info@everest.com</p>
-                  <p>Phone: +91 9710666603</p>
+                <div
+                  style={{
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                    color: '#9ca3af',
+                  }}
+                >
+                  <p>📧 devateverest@gmail.com</p>
+                  <p>📞 +91 9710666603</p>
                 </div>
               </div>
               <div>
-                <h4>Follow</h4>
-                <p className="text-sm">Stay updated with our latest collections and offers.</p>
+                <h4>Follow Us</h4>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: '#9ca3af',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Stay updated with our latest collections, new arrivals, and
+                  exclusive offers.
+                </p>
               </div>
             </div>
-            <div style={{ borderTop: '1px solid #374151', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem' }}>
-              <p>&copy; 2026 Everest Garments. All rights reserved.</p>
+            <div
+              style={{
+                borderTop: '1px solid #374151',
+                paddingTop: '1.5rem',
+                textAlign: 'center',
+                fontSize: '0.8rem',
+                color: '#6b7280',
+              }}
+            >
+              <p>© 2026 Everest Garments. All rights reserved. Crafted with ❤️</p>
             </div>
           </div>
         </footer>
 
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1f2937',
+              color: '#f9fafb',
+              borderRadius: '12px',
+              fontSize: '0.9rem',
+              padding: '12px 20px',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#f9fafb',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#f9fafb',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );

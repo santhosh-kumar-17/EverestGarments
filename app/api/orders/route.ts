@@ -2,6 +2,7 @@ import { connectDB } from '@/lib/mongodb';
 import Order from '@/models/Order';
 import { sendResponse } from '@/lib/response';
 import { CreateOrderSchema } from '@/lib/validation';
+import { sendOrderNotificationEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -15,6 +16,19 @@ export async function POST(request: Request) {
     // Create order
     const order = new Order(validatedData);
     await order.save();
+
+    // Send email notification (fire-and-forget — don't block the response)
+    sendOrderNotificationEmail({
+      orderId: order._id.toString(),
+      customerName: order.customerName,
+      phone: order.phone,
+      address: order.address,
+      notes: order.notes,
+      items: order.items,
+      createdAt: order.createdAt,
+    }).catch((err) => {
+      console.error('Email notification failed (non-blocking):', err);
+    });
 
     return sendResponse(
       201,

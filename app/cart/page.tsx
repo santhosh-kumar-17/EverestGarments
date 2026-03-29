@@ -3,75 +3,218 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import { useCart } from '@/hooks/useCart';
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCart();
+  const { items, removeItem, updateQuantity, clearCart, getTotalPrice, getTotalItems } =
+    useCart();
 
   const totalPrice = getTotalPrice();
+  const totalItems = getTotalItems();
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      alert('Your cart is empty');
+      toast.error('Your cart is empty');
       return;
     }
     router.push('/checkout');
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
-      {/* Header */}
-      <div style={{ borderBottom: '1px solid #e5e7eb', background: 'white', padding: '1.5rem' }}>
-        <div style={{ maxWidth: '80rem', margin: '0 auto', paddingLeft: '1rem', paddingRight: '1rem' }}>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1a1a1a' }}>Shopping Cart</h1>
+    <div style={{ minHeight: '80vh', background: '#f9fafb' }}>
+      {/* Page Header */}
+      <div
+        style={{
+          borderBottom: '1px solid #e5e7eb',
+          background: 'white',
+          padding: '2rem 0',
+        }}
+      >
+        <div className="container">
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: 800,
+              color: '#111827',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Shopping Cart
+          </h1>
+          {items.length > 0 && (
+            <p style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+              {totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart
+            </p>
+          )}
         </div>
       </div>
 
       {/* Cart Content */}
-      <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '3rem 1rem' }}>
+      <div className="container" style={{ padding: '2.5rem 1.5rem' }}>
         {items.length === 0 ? (
-          <div style={{ borderRadius: '0.5rem', background: '#dbeafe', padding: '2rem', textAlign: 'center' }}>
-            <p style={{ marginBottom: '1rem', color: '#6b7280' }}>Your cart is empty</p>
-            <Link href="/products" className="btn btn-primary" style={{ display: 'inline-block' }}>
-              Continue Shopping
+          <div
+            className="animate-fade-in-up"
+            style={{
+              textAlign: 'center',
+              padding: '5rem 2rem',
+              background: 'white',
+              borderRadius: '1rem',
+              border: '1px solid #e5e7eb',
+            }}
+          >
+            <div
+              style={{ fontSize: '4rem', marginBottom: '1rem' }}
+              className="animate-bounce-in"
+            >
+              🛒
+            </div>
+            <h2
+              style={{
+                fontWeight: 700,
+                fontSize: '1.25rem',
+                color: '#111827',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Your cart is empty
+            </h2>
+            <p
+              style={{
+                color: '#6b7280',
+                marginBottom: '1.5rem',
+                fontSize: '0.95rem',
+              }}
+            >
+              Looks like you haven&apos;t added anything yet
+            </p>
+            <Link href="/products" className="btn btn-primary" id="empty-cart-shop">
+              Browse Products →
             </Link>
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+          <div
+            style={{
+              display: 'grid',
+              gap: '2rem',
+              gridTemplateColumns: '1fr 380px',
+            }}
+          >
             {/* Cart Items */}
-            <div style={{ gridColumn: 'span 2' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {items.map((item) => (
-                  <div key={item.productId} className="card" style={{ display: 'flex', gap: '1rem' }}>
-                    <div style={{ position: 'relative', height: '6rem', width: '6rem', flexShrink: 0, overflow: 'hidden', borderRadius: '0.25rem', background: '#e5e7eb' }}>
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
+                {items.map((item, i) => (
+                  <div
+                    key={item.productId}
+                    className="card-flat animate-fade-in-up"
+                    style={{
+                      display: 'flex',
+                      gap: '1.25rem',
+                      animationDelay: `${i * 80}ms`,
+                      transition: 'all 0.3s ease',
+                    }}
+                    id={`cart-item-${item.productId}`}
+                  >
+                    {/* Image */}
+                    <div
+                      style={{
+                        position: 'relative',
+                        height: '7rem',
+                        width: '7rem',
+                        flexShrink: 0,
+                        overflow: 'hidden',
+                        borderRadius: '0.75rem',
+                        background: '#f3f4f6',
+                      }}
+                    >
                       {item.image ? (
                         <Image
                           src={item.image}
                           alt={item.name}
                           fill
                           style={{ objectFit: 'cover' }}
+                          sizes="112px"
                         />
                       ) : (
-                        <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ fontSize: '1.5rem' }}>🖼️</span>
+                        <div
+                          style={{
+                            display: 'flex',
+                            height: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <span style={{ fontSize: '2rem' }}>🖼️</span>
                         </div>
                       )}
                     </div>
 
-                    <div style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                    {/* Details */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
-                        <h3 style={{ fontWeight: 'bold', color: '#1a1a1a' }}>{item.name}</h3>
-                        <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>{item.category}</p>
+                        <h3
+                          style={{
+                            fontWeight: 700,
+                            color: '#111827',
+                            fontSize: '0.95rem',
+                            marginBottom: '0.25rem',
+                          }}
+                        >
+                          {item.name}
+                        </h3>
+                        <span
+                          className="badge"
+                          style={{
+                            background:
+                              item.category === 'Women'
+                                ? 'rgba(236, 72, 153, 0.1)'
+                                : 'rgba(59, 130, 246, 0.1)',
+                            color:
+                              item.category === 'Women' ? '#ec4899' : '#3b82f6',
+                            fontSize: '0.65rem',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            fontWeight: 700,
+                            padding: '0.25rem 0.5rem',
+                          }}
+                        >
+                          {item.category}
+                        </span>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontWeight: '600', color: '#6366f1' }}>
-                          Rs. {item.price}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginTop: '0.75rem',
+                        }}
+                      >
+                        <span
+                          className="gradient-text"
+                          style={{ fontWeight: 700, fontSize: '1rem' }}
+                        >
+                          ₹{item.price.toLocaleString('en-IN')}
                         </span>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid #d1d5db', borderRadius: '0.25rem' }}>
+                          {/* Quantity Control */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              border: '2px solid #e5e7eb',
+                              borderRadius: '0.5rem',
+                              overflow: 'hidden',
+                            }}
+                          >
                             <button
                               onClick={() =>
                                 updateQuantity(item.productId, item.quantity - 1)
@@ -81,16 +224,26 @@ export default function CartPage() {
                                 width: '2rem',
                                 textAlign: 'center',
                                 color: '#6b7280',
-                                background: 'none',
+                                background: 'white',
                                 border: 'none',
                                 cursor: 'pointer',
+                                fontSize: '1rem',
+                                transition: 'background 0.15s',
                               }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                              onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                             >
                               −
                             </button>
-                            <span style={{ width: '2rem', textAlign: 'center', fontSize: '0.875rem', fontWeight: '600' }}>
+                            <span
+                              style={{
+                                width: '2.5rem',
+                                textAlign: 'center',
+                                fontSize: '0.85rem',
+                                fontWeight: 700,
+                                borderLeft: '1px solid #e5e7eb',
+                                borderRight: '1px solid #e5e7eb',
+                                padding: '0.25rem 0',
+                              }}
+                            >
                               {item.quantity}
                             </span>
                             <button
@@ -102,42 +255,68 @@ export default function CartPage() {
                                 width: '2rem',
                                 textAlign: 'center',
                                 color: '#6b7280',
-                                background: 'none',
+                                background: 'white',
                                 border: 'none',
                                 cursor: 'pointer',
+                                fontSize: '1rem',
+                                transition: 'background 0.15s',
                               }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
-                              onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                             >
                               +
                             </button>
                           </div>
 
+                          {/* Remove Button */}
                           <button
-                            onClick={() => removeItem(item.productId)}
+                            onClick={() => {
+                              removeItem(item.productId);
+                              toast.success('Item removed from cart');
+                            }}
                             style={{
-                              fontSize: '0.875rem',
-                              fontWeight: '600',
-                              color: '#dc2626',
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              color: '#ef4444',
                               background: 'none',
                               border: 'none',
                               cursor: 'pointer',
-                              textDecoration: 'none',
                               transition: 'color 0.2s',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '0.375rem',
                             }}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#b91c1c'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#dc2626'}
                           >
-                            Remove
+                            🗑️
                           </button>
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'right' }}>
-                      <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>Subtotal</span>
-                      <span style={{ fontWeight: 'bold', color: '#1a1a1a' }}>
-                        Rs. {(item.price * item.quantity).toFixed(2)}
+                    {/* Item Subtotal */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        minWidth: '5rem',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#9ca3af',
+                          marginBottom: '0.25rem',
+                        }}
+                      >
+                        Subtotal
+                      </span>
+                      <span
+                        style={{
+                          fontWeight: 800,
+                          color: '#111827',
+                          fontSize: '1rem',
+                        }}
+                      >
+                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                       </span>
                     </div>
                   </div>
@@ -145,52 +324,127 @@ export default function CartPage() {
               </div>
 
               <button
-                onClick={() => clearCart()}
-                className="btn btn-secondary"
-                style={{ marginTop: '1rem', width: '100%' }}
+                onClick={() => {
+                  clearCart();
+                  toast.success('Cart cleared');
+                }}
+                className="btn btn-outline btn-sm"
+                id="clear-cart-btn"
+                style={{ marginTop: '1.5rem' }}
               >
-                Clear Cart
+                🗑️ Clear Cart
               </button>
             </div>
 
-            {/* Order Summary */}
+            {/* Order Summary Sidebar */}
             <div>
-              <div className="card" style={{ position: 'sticky', top: '5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1a1a1a' }}>Order Summary</h2>
+              <div
+                className="card-flat animate-fade-in-up delay-200"
+                style={{
+                  position: 'sticky',
+                  top: '5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.25rem',
+                  borderRadius: '1rem',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 800,
+                    color: '#111827',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  Order Summary
+                </h2>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb', padding: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#6b7280' }}>Items ({items.length})</span>
-                    <span style={{ fontWeight: '600', color: '#1a1a1a' }}>
-                      Rs. {totalPrice.toFixed(2)}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                    padding: '1rem 0',
+                    borderTop: '1px solid #f3f4f6',
+                    borderBottom: '1px solid #f3f4f6',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                    <span style={{ color: '#6b7280' }}>
+                      Items ({totalItems})
+                    </span>
+                    <span style={{ fontWeight: 600, color: '#111827' }}>
+                      ₹{totalPrice.toLocaleString('en-IN')}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#6b7280' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '0.85rem',
+                      color: '#9ca3af',
+                    }}
+                  >
                     <span>Shipping</span>
-                    <span>Free</span>
+                    <span style={{ color: '#16a34a', fontWeight: 600 }}>Free</span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontWeight: 'bold', color: '#1a1a1a' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '1.15rem',
+                    fontWeight: 800,
+                    color: '#111827',
+                  }}
+                >
                   <span>Total</span>
-                  <span style={{ color: '#6366f1' }}>Rs. {totalPrice.toFixed(2)}</span>
+                  <span className="gradient-text">
+                    ₹{totalPrice.toLocaleString('en-IN')}
+                  </span>
                 </div>
 
                 <button
                   onClick={handleCheckout}
-                  className="btn btn-primary"
-                  style={{ width: '100%' }}
+                  className="btn btn-primary btn-lg"
+                  id="checkout-btn"
+                  style={{ width: '100%', fontSize: '0.95rem' }}
                 >
-                  Proceed to Checkout
+                  Proceed to Checkout →
                 </button>
 
                 <Link
                   href="/products"
-                  className="btn btn-secondary"
-                  style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
+                  className="btn btn-outline"
+                  id="continue-shopping-btn"
+                  style={{
+                    display: 'block',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                  }}
                 >
                   Continue Shopping
                 </Link>
+
+                {/* Security Badge */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    background: '#f9fafb',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.75rem',
+                    color: '#9ca3af',
+                  }}
+                >
+                  🔒 Secure checkout
+                </div>
               </div>
             </div>
           </div>
