@@ -175,6 +175,23 @@ export default function Navbar() {
                       </p>
                     </div>
 
+                    <Link
+                      href="/orders"
+                      onClick={() => setDropdownOpen(false)}
+                      style={{
+                        display: 'block',
+                        padding: '0.625rem 0.75rem',
+                        borderRadius: '0.5rem',
+                        color: '#374151',
+                        textDecoration: 'none',
+                        fontSize: '0.85rem',
+                        fontWeight: 500,
+                        transition: 'background 0.15s',
+                      }}
+                    >
+                      📦 My Orders
+                    </Link>
+
                     {userType === 'admin' && (
                       <Link
                         href="/admin"

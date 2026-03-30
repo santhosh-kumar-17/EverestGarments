@@ -9,6 +9,7 @@ export interface IOrderItem {
 
 export interface IOrder extends Document {
   customerName: string;
+  email: string;
   phone: string;
   address: string;
   notes?: string;
@@ -46,6 +47,13 @@ const OrderSchema = new Schema<IOrder>(
       required: [true, 'Customer name is required'],
       trim: true,
       maxlength: 100,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      trim: true,
+      lowercase: true,
+      index: true,
     },
     phone: {
       type: String,

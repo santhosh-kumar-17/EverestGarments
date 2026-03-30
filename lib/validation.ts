@@ -22,6 +22,7 @@ export const OrderItemSchema = z.object({
 
 export const CreateOrderSchema = z.object({
   customerName: z.string().min(1, 'Customer name is required').max(100),
+  email: z.string().email('Please provide a valid email'),
   phone: z.string().regex(/^\d{7,}$/, 'Please provide a valid phone number'),
   address: z.string().min(1, 'Address is required').max(500),
   notes: z.string().max(500).optional(),

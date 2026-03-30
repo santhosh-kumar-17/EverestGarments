@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCart();
-  const { isAuthenticated, username } = useAuth();
+  const { isAuthenticated, username, email } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -87,6 +87,7 @@ export default function CheckoutPage() {
 
       const orderData = {
         customerName: formData.customerName.trim(),
+        email: email || '',
         phone: phoneDigits,
         address: formData.address.trim(),
         notes: formData.notes.trim() || undefined,
