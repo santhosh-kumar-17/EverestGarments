@@ -1,15 +1,23 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function CartPage() {
   const router = useRouter();
   const { items, removeItem, updateQuantity, clearCart, getTotalPrice, getTotalItems } =
     useCart();
+  const { isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
@@ -17,6 +25,11 @@ export default function CartPage() {
   const handleCheckout = () => {
     if (items.length === 0) {
       toast.error('Your cart is empty');
+      return;
+    }
+    if (!isAuthenticated) {
+      toast.error('Please sign in to place an order');
+      router.push('/auth?redirect=/checkout');
       return;
     }
     router.push('/checkout');
@@ -413,7 +426,9 @@ export default function CartPage() {
                   id="checkout-btn"
                   style={{ width: '100%', fontSize: '0.95rem' }}
                 >
-                  Proceed to Checkout →
+                  {mounted && !isAuthenticated
+                    ? '🔒 Sign In to Order'
+                    : 'Proceed to Checkout →'}
                 </button>
 
                 <Link

@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCart();
+  const { isAuthenticated, username, email } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     customerName: '',
@@ -18,6 +21,44 @@ export default function CheckoutPage() {
   });
 
   const totalPrice = getTotalPrice();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      toast.error('Please sign in to place an order');
+      router.push('/auth?redirect=/checkout');
+    }
+  }, [mounted, isAuthenticated, router]);
+
+  // Pre-fill name from auth
+  useEffect(() => {
+    if (mounted && isAuthenticated && username) {
+      setFormData((prev) => ({
+        ...prev,
+        customerName: prev.customerName || username,
+      }));
+    }
+  }, [mounted, isAuthenticated, username]);
+
+  // Don't render until mounted and authenticated
+  if (!mounted || !isAuthenticated) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          minHeight: '60vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="spinner" />
+      </div>
+    );
+  }
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

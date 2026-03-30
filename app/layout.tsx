@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
+import Navbar from './components/Navbar';
 
 export const metadata: Metadata = {
   title: 'Everest Garments — Premium Textile Collection',
@@ -25,27 +26,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="page-container">
-        {/* Header */}
-        <header>
-          <div className="container">
-            <nav>
-              <Link href="/" className="logo" aria-label="Everest Garments Home">
-                Everest Garments
-              </Link>
-              <div className="flex gap-6 items-center">
-                <Link href="/products" id="nav-shop">
-                  Shop
-                </Link>
-                <Link href="/cart" id="nav-cart">
-                  🛒 Cart
-                </Link>
-                <Link href="/auth" className="btn btn-primary btn-sm" id="nav-admin">
-                  Admin
-                </Link>
-              </div>
-            </nav>
-          </div>
-        </header>
+        {/* Auth-aware Navigation */}
+        <Navbar />
 
         {/* Main Content */}
         <main className="flex-1">{children}</main>

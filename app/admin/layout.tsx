@@ -28,7 +28,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (mounted && (!token || userType !== 'admin')) {
-      router.push('/auth');
+      router.push('/admin/login');
     }
   }, [token, userType, router, mounted]);
 
