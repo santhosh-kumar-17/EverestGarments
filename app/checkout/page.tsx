@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCart();
-  const { isAuthenticated, username, email } = useAuth();
+  const { isAuthenticated, username } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
