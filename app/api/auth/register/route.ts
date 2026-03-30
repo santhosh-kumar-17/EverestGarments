@@ -1,22 +1,13 @@
 import { connectDB } from '@/lib/mongodb';
+import User from '@/models/User';
 import { hashPassword } from '@/lib/password';
 import { generateToken } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-interface User {
-  email: string;
-  password: string;
-  displayName: string;
-  createdAt: string;
-}
-
-interface UsersCollection {
-  findOne: (query: any) => Promise<User | null>;
-  insertOne: (doc: User) => Promise<any>;
-}
-
 export async function POST(req: NextRequest) {
   try {
+    await connectDB();
+
     const { email, password, displayName } = await req.json();
 
     if (!email || !password || !displayName) {
@@ -26,11 +17,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const db = await connectDB();
-    const users = db.collection('users') as UsersCollection;
+    if (password.length < 6) {
+      return NextResponse.json(
+        { message: 'Password must be at least 6 characters' },
+        { status: 400 }
+      );
+    }
 
     // Check if user already exists
-    const existingUser = await users.findOne({ email });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
         { message: 'Email already registered' },
@@ -40,25 +35,22 @@ export async function POST(req: NextRequest) {
 
     // Hash password and create user
     const hashedPassword = await hashPassword(password);
-    const newUser = {
-      email,
+    const newUser = await User.create({
+      email: email.toLowerCase(),
       password: hashedPassword,
       displayName,
-      createdAt: new Date().toISOString(),
-    };
-
-    await users.insertOne(newUser);
+    });
 
     // Generate token
-    const token = generateToken(email);
+    const token = generateToken(newUser.email);
 
     return NextResponse.json(
       {
         message: 'Registration successful',
         data: {
           token,
-          email,
-          displayName,
+          email: newUser.email,
+          displayName: newUser.displayName,
         },
       },
       { status: 201 }
@@ -66,7 +58,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(
-      { message: 'Registration failed' },
+      { message: 'Registration failed. Please try again.' },
       { status: 500 }
     );
   }

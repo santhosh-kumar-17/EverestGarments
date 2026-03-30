@@ -1,20 +1,13 @@
 import { connectDB } from '@/lib/mongodb';
+import User from '@/models/User';
 import { comparePassword } from '@/lib/password';
 import { generateToken } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-interface User {
-  email: string;
-  password: string;
-  displayName: string;
-}
-
-interface UsersCollection {
-  findOne: (query: any) => Promise<User | null>;
-}
-
 export async function POST(req: NextRequest) {
   try {
+    await connectDB();
+
     const { email, password } = await req.json();
 
     if (!email || !password) {
@@ -24,11 +17,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const db = await connectDB();
-    const users = db.collection('users') as UsersCollection;
-
     // Find user
-    const user = await users.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return NextResponse.json(
         { message: 'Invalid email or password' },
@@ -46,14 +36,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate token
-    const token = generateToken(email);
+    const token = generateToken(user.email);
 
     return NextResponse.json(
       {
         message: 'Login successful',
         data: {
           token,
-          email,
+          email: user.email,
           displayName: user.displayName,
         },
       },
@@ -62,7 +52,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { message: 'Login failed' },
+      { message: 'Login failed. Please try again.' },
       { status: 500 }
     );
   }
