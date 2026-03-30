@@ -22,17 +22,21 @@ export default function AdminLayout({
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  const isLoginPage = pathname === '/admin/login';
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (isLoginPage) return;
     if (mounted && (!token || userType !== 'admin')) {
       router.push('/admin/login');
     }
-  }, [token, userType, router, mounted]);
+  }, [token, userType, router, mounted, isLoginPage]);
 
   if (!mounted) return null;
+  if (isLoginPage) return <>{children}</>;
   if (!token || userType !== 'admin') return null;
 
   const handleLogout = () => {
